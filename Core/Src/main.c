@@ -56,7 +56,26 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void LED1(void)
+{
+  HAL_GPIO_TogglePin(GPIOA, LED1_Pin);
+}
+void LED2(void)
+{
+  HAL_GPIO_TogglePin(GPIOA, LED2_Pin);
+}
+void LED3(void)
+{
+  HAL_GPIO_TogglePin(GPIOA, LED3_Pin);
+}
+void LED4(void)
+{
+  HAL_GPIO_TogglePin(GPIOA, LED4_Pin);
+}
+void LED5(void)
+{
+  HAL_GPIO_TogglePin(GPIOA, LED5_Pin);
+}
 /* USER CODE END 0 */
 
 /**
@@ -89,13 +108,19 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_TIM_Base_Start_IT(&htim2);
+  SCH_Init();
+  SCH_Add_Task(LED1, 100, 100);
+  SCH_Add_Task(LED2, 100, 200);
+  SCH_Add_Task(LED3, 100, 300);
+  SCH_Add_Task(LED4, 100, 400);
+  SCH_Add_Task(LED5, 100, 0);
   /* USER CODE END 2 */
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	SCH_Dispatch_Tasks();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -211,7 +236,10 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  SCH_Update();
+}
 /* USER CODE END 4 */
 
 /**

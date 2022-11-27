@@ -16,9 +16,7 @@ typedef struct {
   uint32_t TaskID;
 }sTask;
 
-#define SCH_MAX_TASKS 1
-#define RETURN_ERROR 0
-#define RETURN_NORMAL 1
+#define SCH_MAX_TASKS 5
 
 sTask SCH_tasks_G[SCH_MAX_TASKS];
 uint32_t current_index_task = 0;
@@ -56,6 +54,23 @@ void SCH_Dispatch_Tasks(void) {
     if(SCH_tasks_G[i].RunMe > 0) {
       SCH_tasks_G[i].RunMe--;
       (*SCH_tasks_G[i].pTask)();
+      if(SCH_tasks_G[i].Period == 0)
+    	  SCH_Delete_Task(i);
     }
   }
+}
+void SCH_Delete_Task(uint32_t ID)
+{
+  if(ID < current_index_task - 1)
+  {
+	for(int i = ID; i < current_index_task - 1; i++)
+	{
+		SCH_tasks_G[i].pTask = SCH_tasks_G[i].pTask;
+		SCH_tasks_G[i].Delay = SCH_tasks_G[i].Delay;
+		SCH_tasks_G[i].Period = SCH_tasks_G[i].Period;
+		SCH_tasks_G[i].RunMe = SCH_tasks_G[i].RunMe;
+		SCH_tasks_G[i].TaskID = SCH_tasks_G[i].TaskID;
+	}
+  }
+  current_index_task--;
 }
